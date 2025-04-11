@@ -8,12 +8,12 @@ from airflow.operators.python import BranchPythonVirtualenvOperator
 with DAG(
     'load_big_wiki',
     default_args={
-        'depends_on_past': True,
+        'depends_on_past': False,
         'retries': 1,
         'retry_delay': timedelta(seconds=3),
     },
     max_active_runs=1,
-    max_active_tasks=1,
+    max_active_tasks=10,
     description='movie',
     schedule="10 10 * * *",
     start_date=datetime(2024, 1,1),
@@ -81,6 +81,7 @@ with DAG(
         python_callable=check_bq_table_exists,
         requirements=["google-cloud-bigquery"],
         system_site_packages=False,
+        venv_cache_path="/tmp/venv/load_big_wiki",
     )
     
     start = EmptyOperator(task_id='start')
@@ -89,4 +90,5 @@ with DAG(
     start >> check
     check >> load_parquet2big
     check >> show_bq_table
-    load_parquet2big >> end
+    load_parquet2big >> show_bq_table
+    show_bq_table >> end
