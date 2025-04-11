@@ -12,7 +12,7 @@ with DAG(
         'retries': 1,
         'retry_delay': timedelta(seconds=3),
     },
-    max_active_runs=1,
+    max_active_runs=10,
     max_active_tasks=10,
     description='movie',
     schedule="10 10 * * *",
