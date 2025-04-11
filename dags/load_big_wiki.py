@@ -13,7 +13,7 @@ with DAG(
         'retry_delay': timedelta(seconds=3),
     },
     max_active_runs=10,
-    max_active_tasks=10,
+    max_active_tasks=16,
     description='movie',
     schedule="10 10 * * *",
     start_date=datetime(2024, 1,1),
@@ -37,10 +37,11 @@ with DAG(
         task_id='show.bq.table',
         bash_command="""
         bq show load.wiki
-        """
+        """,
+        trigger_rule='none_failed_min_one_success',
     )
     
-    def check_bq_table_exists(ds_nodash, ds, **kwargs):        
+    def check_bq_table_exists(ds, **kwargs):        
         from google.cloud import bigquery
         from google.cloud.exceptions import NotFound
         
@@ -69,7 +70,7 @@ with DAG(
             query_job = client.query(query)
             rows = query_job.result()
 
-            if len(rows) > 0:
+            if any(rows):
                 return "show.bq.table"
             else:
                 return "load.parquet2big"
@@ -92,3 +93,6 @@ with DAG(
     check >> show_bq_table
     load_parquet2big >> show_bq_table
     show_bq_table >> end
+
+if __name__ == "__main__":
+    dag.test()
