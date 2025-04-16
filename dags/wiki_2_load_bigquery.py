@@ -6,7 +6,7 @@ from airflow.operators.python import BranchPythonVirtualenvOperator
 
 
 with DAG(
-    'load_big_wiki',
+    'wiki_2_load_bigquery',
     default_args={
         'depends_on_past': False,
         'retries': 1,
