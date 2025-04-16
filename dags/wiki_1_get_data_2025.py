@@ -42,7 +42,7 @@ with DAG(
         aria2c -x 1 -s 1 -j 1 -i "$SAVE_DIR/aria2_projectviews.txt" -d "$SAVE_DIR"
         
         rm "$SAVE_DIR/aria2_projectviews.txt"
-        
+        touch "$SAVE_DIR/_DONE"
         echo "projectviews files downloaded to $SAVE_DIR"
         """,
     )
@@ -64,6 +64,7 @@ with DAG(
         aria2c -x 3 -s 3 -j 1 -i "$SAVE_DIR/aria2_pageviews.txt" -d "$SAVE_DIR"
         
         rm "$SAVE_DIR/aria2_pageviews.txt"
+        touch "$SAVE_DIR/_DONE"
         echo "pageviews files downloaded to $SAVE_DIR"
         """,
     )
