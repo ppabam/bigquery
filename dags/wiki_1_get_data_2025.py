@@ -69,10 +69,46 @@ with DAG(
         """,
     )
     
+    upload_projectviews = BashOperator(
+        task_id='upload.projectviews',
+        bash_command="""
+        gcloud storage cp -r \
+            $HOME/data/wiki/projectviews/{{ ds }} \
+            gs://mansour-bucket/wiki/projectviews/{{ ds }}
+        """
+        )
+    
+    rm_projectviews = BashOperator(
+        task_id='rm.projectviews',
+        bash_command="""
+        rm -rf \
+            $HOME/data/wiki/projectviews/{{ ds }}
+        """
+        )
+    
+    upload_pageviews = BashOperator(
+        task_id='upload.pageviews',
+        bash_command="""
+        gcloud storage cp -r \
+            $HOME/data/wiki/pageviews/{{ ds }} \
+            gs://mansour-bucket/wiki/pageviews/{{ ds }}
+        """
+        )
+    
+    rm_pageviews = BashOperator(
+        task_id='rm.pageviews',
+        bash_command="""
+        rm -rf \
+            $HOME/data/wiki/pageviews/{{ ds }}
+        """
+        )
+    
     start = EmptyOperator(task_id='start')
     end = EmptyOperator(task_id='end')
     
-    start >> download_projectviews >> download_pageviews >> end
+    start >> download_projectviews >> download_pageviews
+    download_projectviews >> upload_projectviews >> rm_projectviews >> end
+    download_pageviews >> upload_pageviews >> rm_pageviews >> end
 
 if __name__ == "__main__":
     dag.test()

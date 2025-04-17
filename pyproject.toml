@@ -23,3 +23,6 @@ distribution = true
 air = [
     "apache-airflow==2.10.2",
 ]
+spark = [
+    "pyspark>=3.5.5",
+]
